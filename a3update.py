@@ -67,7 +67,14 @@ def call_steamcmd(params):
 
 
 def update_server():
-    os.system("{}/arma3server {}".format(A3_SERVER_DIR, "update"))
+    os.system("cd {} && ./arma3server stop".format(A3_SERVER_DIR))
+    os.system("cd {} && ./arma3server lgsm-update".format(A3_SERVER_DIR))
+    os.system("cd {} && ./arma3server update".format(A3_SERVER_DIR))
+
+def start_server():
+    #todo set mods in lgsm config
+    os.system("cd {} && ./arma3server start".format(A3_SERVER_DIR))
+
 
 def mod_needs_update(mod_id, path):
     if os.path.isdir(path):
@@ -129,14 +136,13 @@ def create_mod_symlinks():
         if os.path.isdir(real_path):
             if not os.path.islink(link_path):
                 os.symlink(real_path, link_path)
-#                os.system("ln -s {} {}".format(real_path, link_path))
                 print("Creating symlink '{}'...".format(link_path))
         else:
             print("Mod '{}' does not exist! ({})".format(mod_name, real_path))
 #endregion
 
-#log("Updating A3 server ({})".format(A3_SERVER_ID))
-#update_server()
+log("Updating A3 server ({})".format(A3_SERVER_ID))
+update_server()
 
 log("Updating mods")
 update_mods()
@@ -146,3 +152,6 @@ lowercase_workshop_dir()
 
 log("Creating symlinks...")
 create_mod_symlinks()
+
+log("Start A3 server")
+start_server()
