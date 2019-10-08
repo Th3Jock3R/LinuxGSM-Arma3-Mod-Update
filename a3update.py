@@ -2,7 +2,7 @@
 
 # MIT License
 #
-# Copyright (c) 2017 Marcel de Vries
+# Copyright (c) 2019 Gabriel Weltermann
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,8 @@ import os.path
 import re
 import shutil
 import time
-import getpass 
+import getpass
+from bs4 import BeautifulSoup
 
 from datetime import datetime
 from urllib import request
@@ -45,34 +46,32 @@ STEAM_PASS = getpass.getpass(prompt="Steam Password ")
 A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(A3_SERVER_DIR, A3_WORKSHOP_ID)
 A3_MODS_DIR = "{}/serverfiles/mods".format(A3_SERVER_DIR)
 
-MODS = {
-    "@cba_a3":                                   "450814997",
-    "@ace3":                                     "463939057",
-    "@cup_terrains_core":                        "583496184",
-    "@cup_terrains_maps":                        "583544987",
-    "@cup_terrains_cwa":                         "853743366",
-    "@cup_weapons":                              "497660133",
-    "@cup_units":                                "497661914",
-    "@cup_vehicles":                             "541888371",
-    "@bwmod":                                    "1200127537",
-    "@ace3_-_bwmod_compatibility":               "1200145989",
-    "@task_force_arrowhead_radio":               "894678801",
-    "@rhsusaf":                                  "843577117",
-    "@rhsafrf":                                  "843425103",
-    "@rhsgref":                                  "843593391",
-    "@rhssaf":                                   "843632231",
-    "@3cb_factions":                             "1673456286",
-    "@3cb_baf_vehicles_(rhs_reskins)":           "1515851169",
-    "@3cb_baf_weapons_(rhs_ammo_compatibility)": "1515845502",
-    "@3cb_baf_vehicles_(servicing_extension)":   "1135543967",
-    "@3cb_baf_units_(rhs_compatibility)":        "1135541175",
-    "@3cb_baf_units_(ace_compatibility)":        "1135539579",
-    "@3cb_baf_equipment_(acre_compatibility)":   "1135534951",
-    "@3cb_baf_vehicles":                         "893349825",
-    "@3cb_baf_units":                            "893346105",
-    "@3cb_baf_weapons":                          "893339590",
-    "@3cb_baf_equipment":                        "893328083"
-}
+MOD_FILE = input("Mod-File: ")
+MOD_FILE = "{}/modlists/{}".format(A3_SERVER_DIR, MOD_FILE)
+
+print(MOD_FILE)
+
+if re.search("\.html$", MOD_FILE) == False:
+    MOD_FILE = "{}.html".format(MOD_FILE)
+
+
+if os.path.exists(MOD_FILE) == False:
+    print ("Missing Mod File {}".format(MOD_FILE))
+    sys.exit
+
+soup = BeautifulSoup(open(MOD_FILE, "r").read(), features="lxml")
+
+MODS = {}
+for item in soup.findAll("tr", {"data-type" : "ModContainer"}):
+    name_link   = item.find("a", {"data-type" : "Link"})
+    name_object = item.find("td", {"data-type" : "DisplayName"})
+
+    workshopId = re.search("id=(\d+)", name_link["href"])
+
+    if id:
+        mod_id = workshopId.group(1)
+        mod_link = name_object.contents[0].lower().replace(" ", "_");
+        MODS[mod_link] = mod_id
 
 PATTERN = re.compile(r"workshopAnnouncement.*?<p id=\"(\d+)\">", re.DOTALL)
 WORKSHOP_CHANGELOG_URL = "https://steamcommunity.com/sharedfiles/filedetails/changelog"
