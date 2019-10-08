@@ -49,8 +49,6 @@ A3_MODS_DIR = "{}/serverfiles/mods".format(A3_SERVER_DIR)
 MOD_FILE = input("Mod-File: ")
 MOD_FILE = "{}/modlists/{}".format(A3_SERVER_DIR, MOD_FILE)
 
-print(MOD_FILE)
-
 if re.search("\.html$", MOD_FILE) == False:
     MOD_FILE = "{}.html".format(MOD_FILE)
 
