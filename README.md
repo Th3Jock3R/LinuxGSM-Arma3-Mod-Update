@@ -31,3 +31,7 @@ The Script now update lgsm, arma and all mods inside the modlist.
 ## Troubleshooting
 
 The Steam Account must own a legal copy of Arma 3, if not, the download of mods from the workshop will fail.
+
+
+## Special Thanks
+to [marceldev89](https://github.com/marceldev89) for create the basic [python script](https://gist.github.com/marceldev89/12da69b95d010c8a810fd384cca8d02a)
