@@ -24,8 +24,20 @@ STEAM_PASS = getpass.getpass(prompt="Steam Password ")
 A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(A3_SERVER_DIR, A3_WORKSHOP_ID)
 A3_MODS_DIR = "{}/serverfiles/mods".format(A3_SERVER_DIR)
 
-MOD_FILE = input("Mod-File: ")
-MOD_FILE = "{}/modlists/{}".format(A3_SERVER_DIR, MOD_FILE)
+print("")
+print("Select Modlist Files Found")
+f = []
+for (dirpath, dirnames, filenames) in os.walk("{}/modlists".format(A3_SERVER_DIR)):
+    f.extend(filenames)
+    break
+i = 1;
+for file in f.sort():
+    print("{}.) {}".format(i, file))
+    i += 1
+print("")
+
+selected_file = int(input("Enter Number: ")) - 1
+MOD_FILE = "{}/modlists/{}".format(A3_SERVER_DIR, f[selected_file])
 
 if re.search("\.html$", MOD_FILE) == False:
     MOD_FILE = "{}.html".format(MOD_FILE)
@@ -72,7 +84,23 @@ def update_server():
     os.system("cd {} && ./arma3server update".format(A3_SERVER_DIR))
 
 def start_server():
+    config_mods = "";
+    for mod_name, mod_id in MODS.items():
+        config_mods += "mods/{}\;".format(re.escape(mod_name))
+
+    config_mods = "mods=\"{}\"".format(config_mods)
+
+    replaced = False
+    f = open("{}/lgsm/config-lgsm/arma3server/arma3server.cfg".format(A3_SERVER_DIR), "w+")
+    for line in f:
+        if re.search('mods\=\".*\"', line):
+            newline = line.replace('.*', config_mods)
+            replaced = True
+
+    if replaced == False:
+        f.write(config_mods)
     #todo set mods in lgsm config
+    f.close()
     os.system("cd {} && ./arma3server start".format(A3_SERVER_DIR))
 
 
@@ -125,7 +153,18 @@ def update_mods():
     return True;
 
 def lowercase_workshop_dir():
-    os.system("(cd {} && for i in $( ls | grep [A-Z] ); do mv -i '$i' '`echo $i | tr 'A-Z' 'a-z'`'; done)".format(A3_WORKSHOP_DIR, "{}"))
+    def rename_all( root, items):
+        for name in items:
+            try:
+                os.rename(os.path.join(root, name),
+                os.path.join(root, name.lower()))
+            except OSError:
+                pass # can't rename it, so what
+
+    # starts from the bottom so paths further up remain valid after renaming
+    for root, dirs, files in os.walk(A3_WORKSHOP_DIR, topdown=False):
+        rename_all(root, dirs)
+        rename_all(root, files)
 
 
 def create_mod_symlinks():
@@ -139,6 +178,7 @@ def create_mod_symlinks():
                 print("Creating symlink '{}'...".format(link_path))
         else:
             print("Mod '{}' does not exist! ({})".format(mod_name, real_path))
+
 #endregion
 
 log("Updating A3 server ({})".format(A3_SERVER_ID))
