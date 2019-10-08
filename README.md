@@ -11,14 +11,14 @@ Create an folder "modlists" in the server root folder (the folder where the arma
 $ cd /path/to/arma3server
 $ mkdir modlists
 ```
-Copy the a3update.py in the root folder. Now edit the params
+Copy the a3update.py in the root folder and edit the params:
 
 - A3_SERVER_DIR
 - A3_SERVER_FOLDER
 
 ## Use
 
-You can start the Arma 3 Launcher, go to mods and create an modlist. Afterwards you export them like explained here [https://steamcommunity.com/sharedfiles/filedetails/?id=369395296](Arma3 Mods and the Arma3 Launcher). Now you upload them to your server and put them in the "modlists" folder.
+You can start the Arma 3 Launcher, go to mods and create an modlist. Afterwards you export them like explained here [Arma3 Mods and the Arma3 Launcher](https://steamcommunity.com/sharedfiles/filedetails/?id=369395296). Now you upload them to your server and put them in the "modlists" folder.
 
 You can now start the script with
 ```bash
