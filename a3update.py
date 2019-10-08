@@ -68,7 +68,7 @@ def call_steamcmd(params):
 
 def update_server():
     os.system("cd {} && ./arma3server stop".format(A3_SERVER_DIR))
-    os.system("cd {} && ./arma3server lgsm-update".format(A3_SERVER_DIR))
+    os.system("cd {} && ./arma3server update-lgsm".format(A3_SERVER_DIR))
     os.system("cd {} && ./arma3server update".format(A3_SERVER_DIR))
 
 def start_server():
