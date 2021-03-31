@@ -30,8 +30,9 @@ f = []
 for (dirpath, dirnames, filenames) in os.walk("{}/modlists".format(A3_SERVER_DIR)):
     f.extend(filenames)
     break
-i = 1;
-for file in f.sort():
+i = 1
+f.sort()
+for file in f:
     print("{}.) {}".format(i, file))
     i += 1
 print("")
